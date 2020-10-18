@@ -1,4 +1,4 @@
-## DSAE-Impute: Learning Discriminative Stacked Autoencoders for Imputing Single-cell RNA-seq Data
+# DSAE-Impute: Learning Discriminative Stacked Autoencoders for Imputing Single-cell RNA-seq Data
 
 ### Getting Started
 
