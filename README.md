@@ -1,12 +1,12 @@
 # DSAE-Impute: Learning Discriminative Stacked Autoencoders for Imputing Single-cell RNA-seq Data
 
-### Getting Started
+## Getting Started
 
 DSAE-Impute can be used either on the command line or as Python package. The following instructions can help you quickly use it on your local machine.
 
 
 
-### Method1 (Command line)
+## Method1 (Command line)
 
 #### Installing
 
@@ -44,7 +44,7 @@ python3 ./main.py --input 'data/test.csv'  --outputdir 'data'
 
 
 
-### Method2 (Python package)
+## Method2 (Python package)
 
 #### Installing
 
@@ -64,6 +64,7 @@ input = 'matrix.csv'
 outdir = 'results'
 DSAE_Impute.main(input, outdir) 
 ```
+
 
 
 
