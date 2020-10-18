@@ -56,7 +56,7 @@ pip install DSAE-Impute
 
 #### Usage
 
-You can import the DSAE-Impute package in your python file
+You can import the DSAE-Impute package in your python file to use:
 
 ```python
 import DSAE_Impute
