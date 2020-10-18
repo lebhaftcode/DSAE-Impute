@@ -1,9 +1,3 @@
-''' 
-TODO: 对原始数据集随机遮盖
-
-      掩码数组也是一种数组，它本质上是对数组的一种特殊处理
-      掩码的目的就是表明被掩数据的某些位的作用的，通常用来表明被掩数据哪些要处理，哪些不必处理。
-'''
 import os
 import pandas as pd
 import numpy as np
@@ -13,8 +7,8 @@ from matplotlib.pyplot import MultipleLocator
 class MaskedArray(object):
 
     def __init__(self, data=None, mask=None, distr="exp", dropout=0.01, seed=1):
-        self.data = np.array(data)     # 格式化为np数组
-        self._binMask = np.array(mask) # 格式化为np数组
+        self.data = np.array(data)     
+        self._binMask = np.array(mask) 
         self.shape = data.shape
         self.distr = distr
         self.dropout = dropout
@@ -26,30 +20,26 @@ class MaskedArray(object):
 
     @binMask.setter
     def binMask(self, value):
-        self._binMask = value.astype(bool)  # astype:数据格式转换
+        self._binMask = value.astype(bool)  
 
-    # TODO: 由data和 binMask 获得掩码数组
     def getMaskedMatrix(self):  
-        print(self._binMask)
+        # print(self._binMask)
         maskedMatrix = self.data.copy()
-        maskedMatrix[~self.binMask] = 0    # 若 binMask中为 True(1)，则原数据中对应值无效 0(即被掩盖)
+        maskedMatrix[~self.binMask] = 0    
         return maskedMatrix    
 
-    # TODO: 获取掩码后数据，非定长矩阵，缺失处不补0
     def getMasked(self, rows=True):  
         """ Generator for row or column mask """
         compt = 0
-        if rows:    # TODO: 选取由行对数据集做掩码
+        if rows:    
             while compt < self.shape[0]:
-            # yield: Python中的（generator）生成器并不会一次返回所有结果，
-            # 而是每次遇到yield关键字后返回相应结果，并保留函数当前运行状态，等待下一次调用。
                 yield [ 
                     self.data[compt, idx]
                     for idx in range(self.shape[1])
                     if not self.binMask[compt, idx]
                 ]
                 compt += 1
-        else:    # TODO: 选取由行对数据集做掩码
+        else:    
             while compt < self.shape[1]:
                 yield [
                     self.data[idx, compt]
@@ -58,12 +48,10 @@ class MaskedArray(object):
                 ]
                 compt += 1
 
-    # TODO: 获取输出被掩盖处原始值
     def getMasked_flat(self):
-        print(self.data[~self.binMask]) #######
+        print(self.data[~self.binMask]) 
         return self.data[~self.binMask]
 
-    # TODO: 便于修改一些数据
     def copy(self):
         args = {"data": self.data.copy(), "mask": self.binMask.copy()}
         MaskedArray(**args)
@@ -82,17 +70,15 @@ class MaskedArray(object):
         return 1 + int((cells_g == 0).sum() * dp_f / dp_i)
 
 
-    # TODO: 由掩盖概率生成binMask
     def generate(self):
         np.random.seed(self.seed)
-        self.binMask = np.ones(self.shape).astype(bool)  # 开始将 binMask设为全1矩阵
-
-        for c in range(self.shape[0]):
+        self.binMask = np.ones(self.shape).astype(bool)  
+        
+        ###########    Get masking probability of each value     ##########
+        for c in range(self.shape[0]):  
             cells_c = self.data[c, :]
-            # Retrieve indices of positive values 检索正值索引
             ind_pos = np.arange(self.shape[1])[cells_c > 0]
             cells_c_pos = cells_c[ind_pos]
-            # Get masking probability of each value 获取每个值的掩盖概率
 
             if cells_c_pos.size > 5:
                 probs = self.get_probs(cells_c_pos)
@@ -105,20 +91,13 @@ class MaskedArray(object):
                 self.binMask[c, ind_pos[sorted(masked_idx)]] = False
 
     
-def main(data):
-    row = data.index   # pandas数组可直接取行列索引，但umpy不可，只含数据值
+def main(data, outputdir):
+    row = data.index   
     col = data.columns
-
-    maskedData = MaskedArray(data=data)   # 实例化一个类对象
-    # print(maskedData) 
-    # print(maskedData.binMask)
-
+    maskedData = MaskedArray(data=data)   
     maskedData.generate()
-    # print(maskedData.binMask)
-    # pd.DataFrame(maskedData.binMask, row, col).to_csv('data/mni_500x3000/binMask.csv')
-
     maskedMatrix = maskedData.getMaskedMatrix()
+    #######    save the raw matrix    #######  
     drop = pd.DataFrame(maskedMatrix, row, col)
-    # drop.to_csv('data/neuron9k/raw_500x3000.csv')          ### TODO: 调用进行随机掩盖
-    
+    drop.to_csv(outputdir + '/raw.csv')           
     return drop

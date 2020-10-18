@@ -1,1 +1,1 @@
-from .stacked_autoencoder import StackedAutoEncoder
+from .Discriminative_SAE import Discriminative_SAE
