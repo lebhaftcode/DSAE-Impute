@@ -1,5 +1,7 @@
 # DSAE-Impute: Learning Discriminative Stacked Autoencoders for Imputing Single-cell RNA-seq Data
-
+![PyPI](https://img.shields.io/pypi/v/DSAE-Impute)
+![reposize](https://img.shields.io/github/repo-size/lebhaftcode/DSAE-Impute)
+![license](https://img.shields.io/github/license/lebhaftcode/DSAE-Impute)
 ## Getting Started
 
 DSAE-Impute can be used either on the command line or as Python package. The following instructions can help you quickly use it on your local machine.
