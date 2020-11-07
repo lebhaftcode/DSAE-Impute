@@ -24,14 +24,14 @@ args = parser.parse_args()
 
 def main(data, outdir):
     ########################    Read Data     ########################
-    data_T = pd.read_csv(data, index_col=0)  ## 真实矩阵
+    data_T = pd.read_csv(data, index_col=0)  
     data_raw = Dropout.main(data_T, outdir)
 
     adj = cosine_similarity(data_raw.values)
     print(adj) 
 
     ########################    Data Preprocessing    ######################
-    data_raw_process, row, col, data_true_part = Pre_process.normalize(data_raw, data_T)  # 500x3000 → 500x1344
+    data_raw_process, row, col, data_true_part = Pre_process.normalize(data_raw, data_T)  
 
     ########################        Imputation         ###################### 
     model = Discriminative_SAE(dims = [args.dim1, args.dim2],  
@@ -48,7 +48,7 @@ def main(data, outdir):
     predict = model.predict(data_raw_process)     
 
     impute_part = pd.DataFrame(predict, index=row, columns=col)
-    impute = To_full.getAll(impute_part, data_raw)  ## (500, 1346) → (500, 3000) & 负值 → 绝对值
+    impute = To_full.getAll(impute_part, data_raw)  
     impute.to_csv(outdir + '/impute.csv')
 
     print("------------------------- The metrics of this {}x{}--------------------------- ".format(data_T.values.shape[0], data_T.values.shape[1]))
