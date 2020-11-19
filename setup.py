@@ -3,7 +3,7 @@ import sys
 
 setup(
     name="DSAE-Impute",
-    version="1.1.2",
+    version="1.1.4",
     author="Huan Deng",
     author_email="lehaftcode@gmail.com",
     description="scRNA-seq imputation",
