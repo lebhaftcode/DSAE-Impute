@@ -10,7 +10,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--input', type=str, default='data/test.csv')
+parser.add_argument('--input_true', type=str, default='data/test.csv')
+parser.add_argument('--input_raw', type=str, default='None')
 parser.add_argument('--outputdir', type=str, default='data')
 parser.add_argument('--dim1', type=int, default=600)
 parser.add_argument('--dim2', type=int, default=256)
@@ -22,16 +23,20 @@ parser.add_argument('--print_step', type=int, default=200)
 
 args = parser.parse_args()
 
-def main(data, outdir):
+def main(data1, data2, outdir):
     ########################    Read Data     ########################
-    data_T = pd.read_csv(data, index_col=0)  
-    data_raw = Dropout.main(data_T, outdir)
+    data_T = pd.read_csv(data1, index_col=0)  
+    if(data2 == 'None'):
+        data_raw = Dropout.main(data_T, outdir)
+    else:
+        data_raw = pd.read_csv(data2, index_col=0)
+    data_loss = data_raw      
 
     adj = cosine_similarity(data_raw.values)
     print(adj) 
 
     ########################    Data Preprocessing    ######################
-    data_raw_process, row, col, data_true_part = Pre_process.normalize(data_raw, data_T)  
+    data_raw_process, row, col, data_loss_part = Pre_process.normalize(data_raw, data_loss)  # 500x3000 → 500x1344
 
     ########################        Imputation         ###################### 
     model = Discriminative_SAE(dims = [args.dim1, args.dim2],  
@@ -44,7 +49,7 @@ def main(data, outdir):
                             print_step = args.print_step,
                             Adj = adj)   
 
-    model.fit(data_raw_process, data_true_part)   
+    model.fit(data_raw_process, data_loss_part)   
     predict = model.predict(data_raw_process)     
 
     impute_part = pd.DataFrame(predict, index=row, columns=col)
@@ -54,6 +59,6 @@ def main(data, outdir):
     print("------------------------- The metrics of this {}x{}--------------------------- ".format(data_T.values.shape[0], data_T.values.shape[1]))
     print("Mean Absolute Error: MAE = {0:.3f}".format( mean_absolute_error(data_T, impute) ))
     print("Mean square error: MSE = {0:.3f}".format( mean_squared_error(data_T, impute) ** 0.5 ))
-    print("Pearson correlation coefficient: PCC = {0:.3f}".format( pearsonr(data_true_part.reshape(-1), impute_part.values.reshape(-1))[0] ))
+    print("Pearson correlation coefficient: PCC = {0:.3f}".format( pearsonr(data_T.values.reshape(-1), impute.values.reshape(-1))[0] ))
 
-main(args.input, args.outputdir)
+main(args.input_true, args.input_raw, args.outputdir)

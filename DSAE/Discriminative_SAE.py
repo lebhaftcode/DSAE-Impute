@@ -38,11 +38,11 @@ class Discriminative_SAE:
         self.decoded_layer = None
         self.Adj = Adj   
  
-    def fit(self, x_drop, x_true):  
+    def fit(self, x_drop, x_loss):  
         print('Layer 1 optimizing ...', flush=True)
         temp = np.copy(x_drop)
         out1 = self.run(data_x = (x_drop if self.noise is None else dropout.noise(self.noise, temp)),   # 调用 noise()函数调加噪音，后再 run()
-                        data_x_ = x_true,
+                        data_x_ = x_loss,
                         activation = self.activations[0],
                         hidden_dim = self.dims[0],
                         epoch = self.epoch[0], 
@@ -81,7 +81,7 @@ class Discriminative_SAE:
 
         encode = tf.matmul(x, weight_enc) + bias_enc
         encode = self.activate(encode, self.activations[0])     
-        decode = tf.matmul(encode, weight_dec) + bias_dec      ## TODO: 实质上还是1层
+        decode = tf.matmul(encode, weight_dec) + bias_dec      
 
         return decode.eval(session=sess)   
 
