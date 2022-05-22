@@ -43,7 +43,7 @@ parser.add_argument('--print_step', type=int, default=200)
 #### Running the tests： 
 
 ```shell
-python3 ./main.py --input_true 'data/test.csv'  --outputdir 'data'
+python3 ./main.py --input_true data/test.csv  --outputdir data
 ```
 
 
