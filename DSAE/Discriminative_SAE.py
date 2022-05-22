@@ -41,7 +41,8 @@ class Discriminative_SAE:
     def fit(self, x_drop, x_loss):  
         print('Layer 1 optimizing ...', flush=True)
         temp = np.copy(x_drop)
-        out1 = self.run(data_x = (x_drop if self.noise is None else dropout.noise(self.noise, temp)),   # 调用 noise()函数调加噪音，后再 run()
+         # self.noise非None时：堆叠降噪自编码器
+        out1 = self.run(data_x = (x_drop if self.noise is None else dropout.noise(self.noise, temp)),  
                         data_x_ = x_loss,
                         activation = self.activations[0],
                         hidden_dim = self.dims[0],
@@ -55,7 +56,7 @@ class Discriminative_SAE:
 
         print('Layer 2 optimizing ...', flush=True)
         temp = np.copy(out1)
-        out2 = self.run(data_x = (out1 if self.noise is None else dropout.noise(self.noise, temp)),   # 调用 noise()函数调加噪音，后再 run()
+        out2 = self.run(data_x = (out1 if self.noise is None else dropout.noise(self.noise, temp)),   
                         data_x_ = out1, 
                         activation = self.activations[1],
                         hidden_dim = self.dims[1],
